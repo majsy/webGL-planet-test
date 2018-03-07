@@ -36,7 +36,7 @@
           farDistance = 1000;
         camera = new THREE.PerspectiveCamera(viewAngle, screenWidth / screenHeight, nearDistance, farDistance);
         scene.add(camera);
-        camera.position.z = 2.5;
+        camera.position.z = 2;
 
         // renderer engine
         renderer = new THREE.WebGLRenderer();
@@ -55,21 +55,43 @@
         light.position.set(1, 0, 1).normalize();
         scene.add(light);
 
-        material.map = THREE.ImageUtils.loadTexture('img/earth-map.jpg');
-        material.bumpMap = THREE.ImageUtils.loadTexture('img/earth-bump.jpg');
+        // load maps
+        var loader = new THREE.TextureLoader();
+        material.map = loader.load('img/earth-map.jpg');
+        material.bumpMap = loader.load('img/earth-bump.jpg');
         material.bumpScale = 0.05;
-        // material.specularMap = THREE.ImageUtils.loadTexture('img/earth-spec.jpg');
-        // material.specular = new THREE.Color('white');
+
+        // var glowMesh = new THREE.GlowMesh(earthMesh);
+        // earthMesh.add(glowMesh);
+
+        var lastMove = [window.innerWidth/2, window.innerHeight/2];
+
+        function rotateOnMouseMove(e) {
+          e = e || window.event;
+
+          const moveX = (e.clientX - lastMove[0]);
+          const moveY = (e.clientY - lastMove[1]);
+
+          earthMesh.rotation.y += ( moveX * .002 );
+          earthMesh.rotation.x += ( moveY * .002 );
+
+          lastMove[0] = e.clientX;
+          lastMove[1] = e.clientY;
+        }
+
+        document.addEventListener('mousemove', rotateOnMouseMove);
       }
 
       function animate() {
         requestAnimationFrame(animate);
 
-        earthMesh.rotation.x += 0.005;
-        earthMesh.rotation.y += 0.005;
+        // earthMesh.rotation.x += 0.002;
+        // earthMesh.rotation.y += 0.004;
 
         renderer.render(scene, camera);
       }
+
+      
 
     </script>
 </html>
